@@ -1,0 +1,13 @@
+---
+- name: apt install ntp
+  become: true
+  apt:
+    name: ntp
+    state: latest
+
+- name: Start ntp service
+  become: true
+  service:
+    name: ntp
+    state: restarted
+    enabled: yes

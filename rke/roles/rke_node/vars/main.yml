@@ -1,0 +1,4 @@
+---
+# vars file for rke_master
+rke_user: rke
+rke_user_password: dnflth

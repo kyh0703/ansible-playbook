@@ -1,0 +1,11 @@
+---
+linux_name: "{{ 'Ubuntu' if ansible_distribution == 'Ubuntu'
+  else 'CentOS' if ansible_distribution == 'CentOS'
+  else 'Just Linux' }}"
+
+rke_user: rke
+rke_user_password: dnflth
+
+ansible_ssh_user: rnd
+ansible_ssh_pass: dnplth
+ansible_ssh_port: 22

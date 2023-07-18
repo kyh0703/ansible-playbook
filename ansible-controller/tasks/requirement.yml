@@ -1,0 +1,27 @@
+---
+- name: Install git
+  apt:
+    name:
+      - 'git'
+      - 'wget'
+      - 'curl'
+    state: present
+
+- name: Create cfg
+  shell: '{{ item }}'
+  with_items:
+    - 'touch /home/{{ ansible_user }}/.ansible.cfg'
+    - 'touch /home/{{ ansible_user }}/.vimrc'
+    - 'touch /home/{{ ansible_user }}/.bashrc'
+
+- name: Disable ansible checking ssh host key
+  lineinfile:
+    path: /home/{{ ansible_user }}/.ansible.cfg
+    line: '{{ item }}'
+  with_items:
+    - '[defaults]'
+    - 'host_key_checking = False'
+    - ''
+    - '[privilege_escalation]'
+    - 'become_method=sudo'
+    - 'become_ask_pass=True'

@@ -1,0 +1,65 @@
+--- # Root User
+- name: disable SELinux
+  shell: 'setenforce 0'
+
+- name: Ensure SELinux is set to permissive mode
+  lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: SELINUX=permissive
+
+- name: Add a line kubernetes systemctl configuration
+  lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    line: '{{ item }}'
+    create: yes
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables = 1
+    - net.bridge.bridge-nf-call-iptables = 1
+    - net.ipv4.ip_forward = 1
+
+- name: Apply systemctl configuration
+  shell: sysctl --system
+
+- name: Get kubectl stable version
+  uri:
+    url: https://dl.k8s.io/release/stable.txt
+    return_content: yes
+  register: latest_kubectl
+  until: latest_kubectl.status == 200
+  delay: 10
+  retries: 3
+
+- name: Download kubectl
+  get_url:
+    url: 'https://dl.k8s.io/release/{{ latest_kubectl.content }}/bin/linux/amd64/kubectl'
+    dest: /root
+  register: download
+  until: download.status_code == 200
+  delay: 10
+  retries: 3
+
+- name: Install kubectl
+  shell: install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+- name: Remove kubectl file
+  file:
+    path: './get_helm.sh'
+    state: absent
+
+- name: Install BashCompletion
+  action: '{{ ansible_pkg_mgr }} name=bash-completion state=present'
+
+- name: Source BashCompletion
+  shell: 'kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null'
+
+- name: Add a line Kubectl Alias
+  lineinfile:
+    path: ~/.bashrc
+    line: '{{ item }}'
+  with_items:
+    - alias k=kubectl
+    - complete -F __start_kubectl k
+
+- name: Source Bashrc
+  shell: source ~/.bashrc

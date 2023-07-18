@@ -1,0 +1,7 @@
+---
+- name: Disabled firewalld
+  become: true
+  service:
+    name: ufw
+    state: stopped
+    enabled: false

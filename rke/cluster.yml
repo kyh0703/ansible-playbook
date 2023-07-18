@@ -1,0 +1,4 @@
+nodes: []
+ignore_docker_version: false
+ssh_key_path: "~/.ssh/id_rsa"
+ssh_agent_auth: false

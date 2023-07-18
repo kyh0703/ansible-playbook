@@ -1,0 +1,13 @@
+---
+- name: gen etc hosts
+  become: true
+  lineinfile:
+    path: /etc/hosts
+    line: '# The following lines are desirable for Kubernetes hosts'
+
+- name: gen etc hosts
+  become: true
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[item]['ansible_facts']['hostname'] }}"
+  loop: '{{ ansible_play_hosts }}'

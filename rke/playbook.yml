@@ -1,0 +1,62 @@
+# --- # Start Play Book
+
+# SSH Auto Pass 적용
+- name: Create authority between server and nodes
+  hosts: all
+  connection: local
+  serial: 1
+  gather_facts: yes
+  tasks:
+    - name: auto pass
+      include_tasks: './tasks/auto_pass/{{ linux_name }}.yml'
+
+# rke Node에 etc_hosts 적용
+- name: Set etc hosts
+  hosts:
+    - all
+  tasks:
+    - include: ./tasks/etc_hosts.yml
+
+# 마스터 노드 필요한 패키지 설치
+- name: Requirement Master Node
+  become: true
+  hosts:
+    - rke_masters
+  tasks:
+    - include: ./tasks/requirement/{{ linux_name }}.yml
+
+# RKE Node
+- name: Install rke node
+  gather_facts: true
+  hosts:
+    - rke_masters
+    - rke_workers
+  roles:
+    - rke_node
+
+# RKE 최신 버전 설치
+- name: RKE Handler Provisioning
+  gather_facts: false
+  hosts:
+    - rke_master1
+  roles:
+    - andrewrothstein.rke
+
+# RKE UP
+- name: rke up
+  become: true
+  become_user: '{{ rke_user }}'
+  hosts:
+    - rke_masters
+    - rke_workers
+  tasks:
+    - include: tasks/rke_up.yml
+
+# Helm Install
+- name: rke install
+  become: true
+  become_user: '{{ rke_user }}'
+  hosts:
+    - rke_master1
+  tasks:
+    - include: tasks/rke_install_helm.yml

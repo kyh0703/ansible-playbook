@@ -1,0 +1,19 @@
+---
+- name: Update SSH Yum
+  yum:
+    name: openssh
+    state: latest
+
+- name: Install all required dependencies
+  yum:
+    name:
+      - 'epel-release'
+      - 'python3'
+      - 'python3-devel'
+      - 'python3-pip'
+      - 'python-argparse'
+      - 'python-setuptools'
+    state: present
+
+- name: Install Required Python Library
+  shell: 'pip3 install pyyaml'

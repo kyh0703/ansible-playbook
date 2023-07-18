@@ -1,0 +1,98 @@
+---
+- name: rke cli port
+  firewalld:
+    immediate: true
+    port: 22/tcp
+    permanent: true
+    state: enabled
+
+- name: load balancer/reverse proxy port
+  firewalld:
+    immediate: true
+    port: 80/tcp
+    permanent: true
+    state: enabled
+
+- name: cert manager port
+  firewalld:
+    immediate: true
+    port: 8080/tcp
+    permanent: true
+    state: enabled
+
+- name: rancher agents port
+  firewalld:
+    immediate: true
+    port: 443/tcp
+    permanent: true
+    state: enabled
+
+- name: docker daemon TLS port
+  firewalld:
+    immediate: true
+    port: 2376/tcp
+    permanent: true
+    state: enabled
+
+- name: etcd requests port
+  firewalld:
+    immediate: true
+    port: 2379-2380/tcp
+    permanent: true
+    state: enabled
+
+- name: kubernetes apiserver port
+  firewalld:
+    immediate: true
+    port: 6443/tcp
+    permanent: true
+    state: enabled
+
+- name: Nginx ingress's validating webhook port
+  firewalld:
+    immediate: true
+    port: 8443/tcp
+    permanent: true
+    state: enabled
+
+- name: Cacel/Flannel VXLAN overlay networking port
+  firewalld:
+    immediate: true
+    port: 8472/udp
+    permanent: true
+    state: enabled
+
+- name: Cacel/Flannel livenessProbe/readinessProbe port
+  firewalld:
+    immediate: true
+    port: 9099/tcp
+    permanent: true
+    state: enabled
+
+- name: Metrics server communication with all nodes port
+  firewalld:
+    immediate: true
+    port: 10250/tcp
+    permanent: true
+    state: enabled
+
+- name: Ingress controller livenessProbe/readinessProbe port
+  firewalld:
+    immediate: true
+    port: 10254/tcp
+    permanent: true
+    state: enabled
+
+- name: NodePort TCP
+  firewalld:
+    immediate: true
+    port: 30000-32767/tcp
+    permanent: true
+    state: enabled
+
+- name: NodePort UDP
+  firewalld:
+    immediate: true
+    port: 30000-32767/udp
+    permanent: true
+    state: enabled

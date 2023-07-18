@@ -1,0 +1,8 @@
+# --- # Start Play Book
+- name: Setup ansible controller
+  hosts: localhost
+  connection: local
+  become: True
+  tasks:
+    - include_tasks: 'tasks/requirement.yml'
+    - include_tasks: 'tasks/vim.yml'

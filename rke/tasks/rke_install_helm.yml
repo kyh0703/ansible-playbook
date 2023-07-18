@@ -1,0 +1,72 @@
+---
+- name: Wait for all control-plane pods become created
+  shell: |
+    /usr/local/bin/kubectl get po \
+      --namespace=kube-system \
+      --selector k8s-app \
+      --output=jsonpath='{.items[*].metadata.name}'
+  register: control_plane_pods_created
+  until: "item in control_plane_pods_created.stdout"
+  retries: 10
+  delay: 30
+  with_items:
+    - calico
+    - canal
+    - coredns-autoscaler
+    - metrics-server
+
+- name: Wait for control-plane pods become ready
+  shell: |
+    /usr/local/bin/kubectl wait \
+      --namespace=kube-system \
+      --selector k8s-app \
+      --for=condition=Ready pods \
+      --timeout=600s
+  register: control_plane_pods_ready
+
+- name: Wait for ingress nginx pods become created
+  shell: |
+    /usr/local/bin/kubectl get po \
+      --namespace=ingress-nginx \
+      --selector app=ingress-nginx \
+      --output=jsonpath='{.items[*].metadata.name}'
+  register: ingress_controller_pods_created
+  until: "item in ingress_controller_pods_created.stdout"
+  retries: 10
+  delay: 30
+  with_items:
+    - nginx-ingress-controller
+
+- name: Wait for ingress nginx controller pods become ready
+  shell: |
+    /usr/local/bin/kubectl wait \
+      --namespace=ingress-nginx \
+      --selector app=ingress-nginx \
+      --for=condition=Ready pods \
+      --timeout=600s
+  register: ingress_controller_ready
+
+- name: Add rancher stable Helm repository
+  shell: "{{ item }}"
+  with_items:
+    - "/usr/local/bin/helm repo add rancher-stable https://releases.rancher.com/server-charts/stable"
+    - "/usr/local/bin/helm repo add jetstack https://charts.jetstack.io"
+    - "/usr/local/bin/helm repo update"
+
+- name: Apply Cert Manager in k8s
+  shell: "/usr/local/bin/kubectl apply -f 'https://github.com/cert-manager/cert-manager/releases/download/v1.5.1/cert-manager.crds.yaml'"
+
+- name: Deploy CertManager chart
+  shell: |
+    /usr/local/bin/helm install cert-manager jetstack/cert-manager \
+    --namespace cert-manager \
+    --create-namespace \
+    --version v1.5.1
+
+- name: Deploy Helm chart
+  shell: |
+    /usr/local/bin/helm install rancher rancher-stable/rancher \
+    --namespace cattle-system \
+    --create-namespace \
+    --set hostname=rancher.my.org \
+    --set replicas=3

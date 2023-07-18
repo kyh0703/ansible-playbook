@@ -1,0 +1,102 @@
+---
+- name: ssh-keyscan for known_hosts file
+  command: /usr/bin/ssh-keyscan -t ecdsa {{ ansible_host }}
+  delegate_to: rke_master1
+  register: keyscan
+
+- name: input key
+  lineinfile:
+    path: ~/.ssh/known_hosts
+    line: '{{ item }}'
+    create: yes
+  delegate_to: rke_master1
+  with_items:
+    - '{{ keyscan.stdout_lines }}'
+
+- name: Generate an OpenSSH keypair
+  openssh_keypair:
+    path: $HOME/.ssh/id_rsa
+    owner: '{{ rke_user }}'
+    group: '{{ rke_user }}'
+    size: 2048
+  delegate_to: rke_master1
+  run_once: true
+
+- name: Get id_rsa.pub From RKE Home directory
+  command: 'cat $HOME/.ssh/id_rsa.pub'
+  register: id_pub
+  delegate_to: rke_master1
+  run_once: true
+
+- name: Add ansible-node authorized keys
+  lineinfile:
+    dest: $HOME/.ssh/authorized_keys
+    line: '{{ id_pub.stdout }}'
+
+- name: Copy python code
+  copy:
+    src: '{{ item }}'
+    dest: '$HOME'
+  with_items:
+    - 'cluster.yml'
+    - 'rke_cluster.py'
+  delegate_to: rke_master1
+  run_once: true
+
+- name: Install Required Python Library
+  become_user: '{{ rke_user }}'
+  delegate_to: rke_master1
+  shell: 'pip3 install PyYAML'
+
+- name: Make cluster.yaml
+  shell: |
+    python3 rke_cluster.py \
+      --host {{ hostvars[item]['ansible_facts']['hostname'] }} \
+      --address {{ hostvars[item]['ansible_facts']['default_ipv4']['address'] }} \
+      --role {{ item }}
+  loop: '{{ ansible_play_hosts }}'
+  args:
+    chdir: $HOME
+  delegate_to: rke_master1
+  run_once: true
+
+- name: Command "rke up"
+  shell: '/usr/local/bin/rke up --config cluster.yml'
+  args:
+    chdir: $HOME
+  delegate_to: rke_master1
+  run_once: true
+
+- name: Create .kube directory authorize
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: '0700'
+
+- name: Create .kube config
+  file:
+    path: $HOME/.kube/config
+    state: touch
+    mode: '0600'
+
+- name: Copy kubeconfig
+  shell: 'cp kube_config_cluster.yml .kube/config'
+  args:
+    chdir: $HOME
+  delegate_to: rke_master1
+  run_once: true
+
+- name: Add a line Kubectl Alias
+  lineinfile:
+    path: $HOME/.bashrc
+    line: '{{ item }}'
+  with_items:
+    - alias k=kubectl
+    - complete -F __start_kubectl k
+
+- name: Delete python code
+  file:
+    path: '$HOME/rke_cluster.py'
+    state: absent
+  delegate_to: rke_master1
+  run_once: true

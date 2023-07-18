@@ -1,0 +1,11 @@
+---
+- name: Install all required dependencies
+  apt:
+    name:
+      - 'python3'
+      - 'python3-dev'
+      - 'python3-pip'
+      - 'python-pip'
+      - 'python-argparse'
+      - 'python-setuptools'
+    state: present

@@ -1,0 +1,12 @@
+[rke_masters]
+rke_master1 ansible_host=100.100.106.150 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_master2 ansible_host=100.100.106.151 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_master3 ansible_host=100.100.106.152 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+
+[rke_workers]
+rke_worker1 ansible_host=100.100.106.153 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_worker2 ansible_host=100.100.106.154 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_worker3 ansible_host=100.100.106.155 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_worker4 ansible_host=100.100.106.156 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_worker5 ansible_host=100.100.106.157 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3
+rke_worker6 ansible_host=100.100.106.158 ansible_ssh_pass=dnflth ansible_python_interpreter=/usr/bin/python3

@@ -1,0 +1,33 @@
+---
+- name: Download docker install shell from rancher
+  become: true
+  get_url:
+    url: 'https://releases.rancher.com/install-docker/20.10.sh'
+    dest: /tmp/get_docker.sh
+  register: download
+  until: download.status_code == 200
+  delay: 3
+  retries: 3
+
+- name: Chmod Docker Install Shell
+  become: true
+  file:
+    path: /tmp/get_docker.sh
+    mode: 0700
+
+- name: Install docker
+  become: true
+  shell: /tmp/get_docker.sh
+
+- name: Start docker service
+  become: true
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Delete Docker Shall
+  become: true
+  file:
+    path: /tmp/get_docker.sh
+    state: absent

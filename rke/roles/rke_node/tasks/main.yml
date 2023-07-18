@@ -1,0 +1,23 @@
+---
+- name: NTP service
+  include: 'ntp/{{ linux_name }}.yml'
+
+- name: Disabled firewalld
+  include: 'firewalld/{{ linux_name }}.yml'
+
+- name: Dependencies k8s package
+  include: 'k8s/{{ linux_name }}.yml'
+
+- name: install docker
+  include: docker.yml
+
+- name: dependencies ceph storage
+  include: 'ceph/{{ linux_name }}.yml'
+
+- name: dependencies rke option
+  become: true
+  include: rke.yml
+
+- name: Install helm
+  become: true
+  include: helm.yml
