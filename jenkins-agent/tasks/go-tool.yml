@@ -1,0 +1,16 @@
+---
+- name: Install golangci-lint
+  become: true
+  shell: su - jenkins -c '/usr/local/go/bin/go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3'
+
+- name: Install junit report
+  become: true
+  shell: su - jenkins -c '/usr/local/go/bin/go install github.com/jstemmer/go-junit-report/v2@latest'
+
+- name: Install ginkgo report
+  become: true
+  shell: su - jenkins -c '/usr/local/go/bin/go install github.com/onsi/ginkgo/v2/ginkgo@latest'
+
+- name: Set Go private
+  become: true
+  shell: su - jenkins -c '/usr/local/go/bin/go env -w GOPRIVATE=gitlab.com/ipron-cloud,gitlab.com/ipron-core'

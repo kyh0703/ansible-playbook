@@ -1,0 +1,37 @@
+---
+- name: Down load jenkins gpg key
+  get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    dest: /tmp/jenkins.io.key
+
+- name: Set vairable for jenkins key
+  shell: cat /tmp/jenkins.io.key
+  register: jenkins_gpg_key
+
+- name: Add jenkins gpg key
+  shell: apt-key add /tmp/jenkins.io.key
+
+- name: Set jenkins stable
+  shell: echo deb http://pkg.jenkins.io/debian-stable binary/
+  register: jenkins_stable
+
+- name: Add jenkins stable
+  lineinfile:
+    path: /etc/apt/sources.list.d/jenkins.list
+    line: '{{ jenkins_stable.stdout }}'
+    create: yes
+
+- name: Sudo apt update
+  apt:
+    update_cache: yes
+
+- name: Install jenkins
+  apt:
+    name: jenkins
+    state: present
+
+- name: Start jenkins
+  service:
+    name: jenkins
+    state: started
+    enabled: yes

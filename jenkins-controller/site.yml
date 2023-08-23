@@ -1,0 +1,13 @@
+- name: Setup jenkins agent
+  hosts: jenkins_controller
+  become: true
+  vars:
+    - jdk_version: 11
+  roles:
+    - java
+
+- name: Setup jenkins
+  hosts: jenkins_controller
+  become: true
+  tasks:
+    - include_tasks: 'tasks/main.yml'

@@ -1,0 +1,19 @@
+- name: Setup jenkins agent
+  hosts: jenkins_agents
+  become: true
+  vars:
+    - go_version: 1.20.6
+    - jdk_version: 11
+  roles:
+    - docker
+    - golang
+    - java
+    - helm
+
+- name: Run Environment
+  hosts: jenkins_agents
+  vars:
+    - ansible_controller: 100.100.103.170:8080
+    - docker_registry: 100.100.103.167
+  tasks:
+    - include_tasks: 'tasks/main.yml'

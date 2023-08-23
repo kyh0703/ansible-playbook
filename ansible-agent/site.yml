@@ -1,0 +1,12 @@
+- name: Create authority between server and nodes
+  hosts: all
+  connection: local
+  serial: 1
+  tasks:
+    - name: auto pass
+      include_tasks: 'tasks/auto_pass/main.yml'
+
+- name: Set etc hosts
+  hosts: all
+  tasks:
+    - include_tasks: tasks/etc_hosts.yml

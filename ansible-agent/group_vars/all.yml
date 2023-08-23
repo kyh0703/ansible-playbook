@@ -1,8 +1,0 @@
----
-linux_name: "{{ 'Ubuntu' if ansible_distribution == 'Ubuntu'
-  else 'CentOS' if ansible_distribution == 'CentOS'
-  else 'Just Linux' }}"
-
-ansible_ssh_user: rnd
-ansible_ssh_pass: dnplth1!
-ansible_ssh_port: 22

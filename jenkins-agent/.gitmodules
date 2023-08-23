@@ -1,0 +1,12 @@
+[submodule "roles/golang"]
+	path = roles/golang
+	url = http://100.100.103.5/devops/ansible-galaxy/golang.git
+[submodule "roles/docker"]
+	path = roles/docker
+	url = http://100.100.103.5/devops/ansible-galaxy/docker.git
+[submodule "roles/java"]
+	path = roles/java
+	url = http://100.100.103.5/devops/ansible-galaxy/java.git
+[submodule "roles/helm"]
+	path = roles/helm
+	url = http://100.100.103.5/devops/ansible-galaxy/helm.git

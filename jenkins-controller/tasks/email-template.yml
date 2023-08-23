@@ -1,0 +1,16 @@
+---
+- name: Create email template directory
+  file:
+    path: /var/lib/jenkins/email-templates
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+
+- name: Copy jelly default html
+  copy:
+    src: files/default.jelly
+    dest: /var/lib/jenkins/email-templates/default.jelly
+    owner: jenkins
+    group: jenkins
+    mode: 0644

@@ -1,7 +1,7 @@
 ---
-linux_name: "{{ 'Ubuntu' if ansible_distribution == 'Ubuntu'
-  else 'CentOS' if ansible_distribution == 'CentOS'
-  else 'Just Linux' }}"
+linux_name: "{{ 'ubuntu' if ansible_distribution == 'Ubuntu'
+  else 'centos' if ansible_distribution == 'CentOS'
+  else 'linux' }}"
 
 rke_user: rke
 rke_user_password: dnflth
