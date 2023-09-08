@@ -1,0 +1,36 @@
+---
+- name: Install helm cm-push plugin
+  become: true
+  shell: su - jenkins -c 'helm plugin install https://github.com/chartmuseum/helm-push'
+  ignore_errors: yes
+
+- name: Create a directory if it dose not exist
+  become: true
+  file:
+    path: /home/jenkins/ca
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+
+- name: Copy file with owner and permissions
+  become: true
+  copy:
+    src: files/ca.crt
+    dest: /home/jenkins/ca/ca.crt
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Add Helm Repository
+  become: true
+  shell: '{{ item }}'
+  with_items:
+    - su - jenkins -c 'helm repo add --ca-file /home/jenkins/ca/ca.crt --username admin --password wlwndgo core https://100.100.103.167/chartrepo/core'
+    - su - jenkins -c 'helm repo add --ca-file /home/jenkins/ca/ca.crt --username admin --password wlwndgo media https://100.100.103.167/chartrepo/media'
+    - su - jenkins -c 'helm repo add --ca-file /home/jenkins/ca/ca.crt --username admin --password wlwndgo back https://100.100.103.167/chartrepo/back'
+    - su - jenkins -c 'helm repo add --ca-file /home/jenkins/ca/ca.crt --username admin --password wlwndgo front https://100.100.103.167/chartrepo/front'
+
+- name: Update helm repo
+  become: true
+  shell: su - jenkins -c 'helm repo update'
