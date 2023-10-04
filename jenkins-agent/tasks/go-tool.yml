@@ -14,3 +14,13 @@
 - name: Set Go private
   become: true
   shell: su - jenkins -c '/usr/local/go/bin/go env -w GOPRIVATE=gitlab.com/ipron-cloud,gitlab.com/ipron-core'
+
+- name: Set $PATH=gobin
+  become: true
+  lineinfile:
+    path: /home/jenkins/.bashrc
+    line: "export PATH=$PATH:/home/jenkins/go/bin"
+    owner: jenkins
+    group: jenkins
+    mode: '0600'
+    create: yes
