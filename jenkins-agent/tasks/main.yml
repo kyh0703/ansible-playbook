@@ -3,3 +3,4 @@
 - include_tasks: yq.yml
 - include_tasks: go-tool.yml
 - include_tasks: helm.yml
+- include_tasks: crontab.yml

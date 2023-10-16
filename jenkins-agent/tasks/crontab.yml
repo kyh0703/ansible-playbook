@@ -1,0 +1,9 @@
+---
+- name: Copy docker image gc shell
+  become: true
+  copy:
+    src: files/docker-image-gc.sh
+    dest: /etc/cron.daily/docker-image-gc
+    owner: root
+    group: root
+    mode: 0755

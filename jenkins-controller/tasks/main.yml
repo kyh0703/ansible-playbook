@@ -3,3 +3,5 @@
   when: ansible_os_family == 'Debian'
 
 - include_tasks: email-template.yml
+- include_tasks: crontab.yml
+- include_tasks: yq.yml

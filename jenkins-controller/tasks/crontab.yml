@@ -1,0 +1,18 @@
+---
+- name: Copy jenkins cache shell
+  become: true
+  copy:
+    src: files/jenkins-cache.sh
+    dest: /etc/cron.daily/jenkins-cache
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy harbor image garbage collection shell
+  become: true
+  copy:
+    src: files/harbor-image-gc.sh
+    dest: /etc/cron.daily/harbor-image-gc
+    owner: root
+    group: root
+    mode: 0755
